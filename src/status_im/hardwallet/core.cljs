@@ -50,9 +50,11 @@
                 {:db (assoc-in db [:hardwallet :on-card-connected] nil)}
                 (models.wallet/discard-transaction)
                 (navigation/navigate-to-cofx :browser nil))
-      (fx/merge cofx
-                {:db (assoc-in db [:hardwallet :on-card-connected] nil)}
-                (navigation/navigate-back)))))
+      (if (= 1 (count screen-before))
+        (navigation/navigate-to-clean cofx :accounts nil)
+        (fx/merge cofx
+                  {:db (assoc-in db [:hardwallet :on-card-connected] nil)}
+                  (navigation/navigate-back))))))
 
 (fx/defn remove-pairing-from-account
   [{:keys [db]} {:keys [remove-instance-uid?]}]
