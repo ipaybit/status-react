@@ -265,7 +265,7 @@
   [{:keys [db] :as cofx}]
   (fx/merge cofx
             {:db (assoc-in db [:hardwallet :pin :enter-step] :login)}
-            (navigation/navigate-to-cofx :enter-pin nil)))
+            (navigation/navigate-to-cofx :enter-pin-login nil)))
 
 (fx/defn get-user-password
   [_ address]
