@@ -6,17 +6,6 @@
             [status-im.models.transactions :as transactions]
             [goog.Uri :as goog-uri]))
 
-(deftest have-unconfirmed-transactions
-  (is (transactions/have-unconfirmed-transactions?
-       [{:confirmations "0"}]))
-  (is (transactions/have-unconfirmed-transactions?
-       [{:confirmations "11"}]))
-  (is (transactions/have-unconfirmed-transactions?
-       [{:confirmations "200"}
-        {:confirmations "0"}]))
-  (is (not (transactions/have-unconfirmed-transactions?
-            [{:confirmations "12"}]))))
-
 (deftest chat-map->transaction-ids
   (is (= #{} (transactions/chat-map->transaction-ids "testnet_rpc" {})))
   (is (= #{"a" "b" "c" "d"}
@@ -222,7 +211,7 @@
 
 (deftest etherscan-transactions
   (let [ky-set #{:block :hash :symbol :gas-price :value :gas-limit :type
-                 :confirmations :gas-used :from :timestamp :nonce :to :data}]
+                 :gas-used :from :timestamp :nonce :to :data}]
     (with-redefs [http/get (fn [url success-fn error-fn]
                              (success-fn mock-etherscan-success-response))]
       (let [result (atom nil)]
