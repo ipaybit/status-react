@@ -184,7 +184,7 @@
                        #{:wallet-sign-message-modal :wallet-send-transaction-modal :wallet-send-modal-stack}
                        view-id)
                     :enter-pin-modal
-                    :enter-pin)
+                    :enter-pin-sign)
                   nil))))))
 
 ;; DISCARD TRANSACTION
@@ -402,7 +402,7 @@
                      #{:wallet-sign-message-modal :wallet-send-transaction-modal :wallet-send-modal-stack}
                      (:view-id db))
                   :enter-pin-modal
-                  :enter-pin)
+                  :enter-pin-sign)
                 nil)))))
 
 (handlers/register-handler-fx
