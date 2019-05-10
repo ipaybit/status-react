@@ -34,6 +34,12 @@ in mkShell' {
   (if useFastlanePkg then [ fastlane' ] else lib.optionals platform.targetMobile [ bundler ruby ]); # bundler/ruby used for fastlane on macOS
   inputsFrom = [ projectDeps ];
   TARGET_OS=target-os;
+
+  /* default to UTF-8 */
+  LANG     = "en_US.UTF-8";
+  LC_ALL   = "en_US.UTF-8";
+  LANGUAGE = "en_US.UTF-8";
+
   shellHook =
     ''
       set -e

@@ -23,9 +23,6 @@ pipeline {
 
   environment {
     TARGET_OS = 'macos'
-    LANG      = 'en_US.UTF-8'
-    LANGUAGE  = 'en_US.UTF-8'
-    LC_ALL    = 'en_US.UTF-8'
     NIX_CONF_DIR = "${env.WORKSPACE}/nix"
     VERBOSE_LEVEL = '3'
     /* We use EXECUTOR_NUMBER to avoid multiple instances clashing */

@@ -28,6 +28,7 @@ def bundle() {
       nix.shell(
         "./gradlew assemble${target.capitalize()} ${gradleOpt}",
         keep: [
+          'REALM_DISABLE_ANALYTICS',
           'STATUS_RELEASE_STORE_FILE', 'STATUS_RELEASE_STORE_PASSWORD',
           'STATUS_RELEASE_KEY_ALIAS', 'STATUS_RELEASE_KEY_PASSWORD'
         ]
@@ -51,7 +52,7 @@ def uploadToPlayStore(type = 'nightly') {
   ]) {
     nix.shell(
       "fastlane android ${type}",
-      keep:['FASTLANE_DISABLE_COLORS', 'GOOGLE_PLAY_JSON_KEY']
+      keep: ['FASTLANE_DISABLE_COLORS', 'GOOGLE_PLAY_JSON_KEY']
     )
   }
 }

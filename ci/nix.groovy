@@ -8,11 +8,7 @@ def shell(Map args = [:], String cmd) {
   def defaults = [
     pure: true,
     args: ['target-os': env.TARGET_OS],
-    keep: [
-      'LANG', 'LANGUAGE', 'LC_ALL',
-      'LOCALE_ARCHIVE_2_27',
-      'REALM_DISABLE_ANALYTICS'
-    ],
+    keep: ['LOCALE_ARCHIVE_2_27'],
   ]
   // merge defaults with received args
   args = defaults << args
@@ -46,7 +42,9 @@ def prepEnv() {
     ).trim()
     /**
      * This is a hack to fix missing locale errors.
-     * See: https://qiita.com/kimagure/items/4449ceb0bda5c10ca50f
+     * See:
+     * - https://github.com/NixOS/nixpkgs/issues/38991
+     * - https://qiita.com/kimagure/items/4449ceb0bda5c10ca50f
      **/
     env.LOCALE_ARCHIVE_2_27 = "${glibcLocales}/lib/locale/locale-archive"
   }

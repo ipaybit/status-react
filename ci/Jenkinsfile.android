@@ -23,9 +23,6 @@ pipeline {
 
   environment {
     TARGET_OS = 'android'
-    LANG      = 'en_US.UTF-8'
-    LANGUAGE  = 'en_US.UTF-8'
-    LC_ALL    = 'en_US.UTF-8'
     NIX_CONF_DIR = "${env.WORKSPACE}/nix"
     FASTLANE_DISABLE_COLORS = 1
     REALM_DISABLE_ANALYTICS = 1
