@@ -311,10 +311,13 @@
   [{:keys [db] :as cofx} info on-success]
   (let [info' (js->clj info :keywordize-keys true)
         {:keys [pin-retry-counter puk-retry-counter instance-uid]} info'
-        connect-screen? (= (:view-id db) :hardwallet-connect)
+        view-id (:view-id db)
+        connect-screen? (contains? #{:hardwallet-connect
+                                     :hardwallet-connect-sign
+                                     :hardwallet-connect-settings} view-id)
         {:keys [card-state on-card-read]} (:hardwallet db)
         on-success' (or on-success on-card-read)
-        accounts-screen? (= :accounts (:view-id db))
+        accounts-screen? (= :accounts view-id)
         auto-login? (and accounts-screen?
                          (not= on-success :hardwallet/auto-login))
         setup-starting? (= :begin (get-in db [:hardwallet :setup-step]))
@@ -1212,7 +1215,7 @@
   (fx/merge cofx
             {:db (-> db
                      (assoc-in [:hardwallet :pin :enter-step] :import-account))}
-            (navigation/navigate-to-cofx :enter-pin nil)))
+            (navigation/navigate-to-cofx :enter-pin-login nil)))
 
 (fx/defn generate-and-load-key
   [{:keys [db] :as cofx}]
