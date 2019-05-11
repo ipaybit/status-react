@@ -28,7 +28,8 @@
             [status-im.utils.platform :as platform]
             [status-im.utils.utils :as utils]
             [status-im.utils.datetime :as datetime]
-            [status-im.ui.screens.chat.message.gap :as gap])
+            [status-im.ui.screens.chat.message.gap :as gap]
+            [reagent.core :as reagent])
   (:require-macros [status-im.utils.views :refer [defview letsubs]]))
 
 (defn add-contact-bar [public-key]
@@ -76,12 +77,17 @@
   [{:keys [row idx list-ref]}]
   [gap/gap row idx list-ref])
 
+(defn foo [group-chat current-public-key modal? row idx viewed-ids]
+  (if (contains? @viewed-ids idx)
+    [message/chat-message (assoc row
+                                 :group-chat group-chat
+                                 :modal? modal?
+                                 :current-public-key current-public-key)]
+    [react/view {:height 50 :width 100}]))
+
 (defmethod message-row :default
-  [{:keys [group-chat current-public-key modal? row]}]
-  [message/chat-message (assoc row
-                               :group-chat group-chat
-                               :modal? modal?
-                               :current-public-key current-public-key)])
+  [{:keys [group-chat current-public-key modal? row idx viewed-ids]}]
+  [foo group-chat current-public-key modal? row idx viewed-ids])
 
 (def animation-duration 200)
 
@@ -236,12 +242,24 @@
 
 (defonce messages-list-ref (atom nil))
 
+(def viewed-messages1 (reagent/atom (set (range 5))))
+
+(defn v [args]
+  (let [n (set (js->clj (.map
+                         (.-viewableItems args)
+                         (fn [item]
+                           (.-index item)))))]
+    (swap! viewed-messages1 #(clojure.set/union % n))))
+
 (defview messages-view
   [{:keys [group-chat chat-id pending-invite-inviter-name] :as chat}
    modal?]
   (letsubs [messages           [:chats/current-chat-messages-stream]
             current-public-key [:account/public-key]]
-    {:component-did-mount
+    {:component-will-mount
+     (fn []
+       (reset! viewed-messages1 (range 5)))
+     :component-did-mount
      (fn [args]
        (when-not (:messages-initialized? (second (.-argv (.-props args))))
          (re-frame/dispatch [:chat.ui/load-more-messages]))
@@ -249,24 +267,27 @@
                            {:messages-focused? true
                             :input-focused?    false}]))}
     (let [no-messages (empty? messages)
+
           flat-list-conf
-          {:data                      messages
-           :ref                       #(reset! messages-list-ref %)
-           :footer                    [chat-intro-header-container chat no-messages]
-           :key-fn                    #(or (:message-id %) (:value %))
-           :render-fn                 (fn [message idx]
-                                        [message-row
-                                         {:group-chat         group-chat
-                                          :modal?             modal?
-                                          :current-public-key current-public-key
-                                          :row                message
-                                          :idx                idx
-                                          :list-ref           messages-list-ref}])
-           :inverted                  true
-           :onEndReached              #(re-frame/dispatch
-                                        [:chat.ui/load-more-messages])
-           :enableEmptySections       true
-           :keyboardShouldPersistTaps :handled}
+                      {:data                      (take 10 messages)
+                       :ref                       #(reset! messages-list-ref %)
+                       :footer                    [chat-intro-header-container chat no-messages]
+                       :key-fn                    #(or (:message-id %) (:value %))
+                       :render-fn                 (fn [message idx]
+                                                    [message-row
+                                                     {:group-chat         group-chat
+                                                      :modal?             modal?
+                                                      :current-public-key current-public-key
+                                                      :row                message
+                                                      :idx                idx
+                                                      :list-ref           messages-list-ref
+                                                      :viewed-ids         viewed-messages1}])
+                       :onViewableItemsChanged    v
+                       :inverted                  true
+                       :onEndReached              #(re-frame/dispatch
+                                                    [:chat.ui/load-more-messages])
+                       :enableEmptySections       true
+                       :keyboardShouldPersistTaps :handled}
           group-header {:header [group-chat-footer chat-id]}]
       (if pending-invite-inviter-name
         [list/flat-list (merge flat-list-conf group-header)]

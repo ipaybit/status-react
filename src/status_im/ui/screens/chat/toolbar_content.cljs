@@ -53,8 +53,6 @@
 (defview toolbar-content-view []
   (letsubs [{:keys [group-chat color online contacts chat-name contact
                     public? chat-id] :as chat}    [:chats/current-chat]
-            show-actions?                         [:chats/current-chat-ui-prop :show-actions?]
-            accounts                              [:accounts/accounts]
             sync-state                            [:sync-state]]
     (let [has-subtitle? (or group-chat (not= :done sync-state))]
       [react/view {:style st/toolbar-container}

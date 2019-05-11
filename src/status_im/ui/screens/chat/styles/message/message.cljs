@@ -26,7 +26,9 @@
   (let [align (if outgoing :flex-end :flex-start)
         direction (if outgoing :row-reverse :row)]
     (merge {:flex-direction direction
-            :padding-top    (message-padding-top message)
+            ;;:padding-top    (message-padding-top message)
+            :padding 0
+            :margin 0
             :align-self     align
             :align-items    align}
            (when display-photo?
@@ -73,7 +75,8 @@
          (last-message-padding message)))
 
 (defn timestamp-content-wrapper [outgoing message-type]
-  {:flex-direction (if outgoing :row-reverse :row)})
+  (merge {:flex-direction (if outgoing :row-reverse :row)
+          :margin-left 8}))
 
 (defn group-message-view
   [outgoing message-type]
@@ -142,8 +145,8 @@
           :margin-top         (if (and first-in-group?
                                        (or outgoing
                                            (not group-chat)))
-                                16
-                                4)}
+                                12
+                                0)}
          (if (= content-type constants/content-type-emoji)
            {:flex-direction :row}
            {:background-color (if outgoing colors/blue colors/blue-light)})

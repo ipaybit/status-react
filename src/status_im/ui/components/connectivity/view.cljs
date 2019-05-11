@@ -65,32 +65,23 @@
 
 (defn manage-visibility [connected? anim-opacity anim-height]
   (if connected?
-    (do (animation/start
-         (animation/parallel
-          [(animation/timing anim-opacity
-                             {:toValue 0
-                              :delay 800
-                              :duration 150
-                              :easing (.-ease (animation/easing))})
-           (animation/timing anim-height
-                             {:toValue 0
-                              :delay 800
-                              :duration 150
-                              :easing (.-ease (animation/easing))})]))
+    (do #_(animation/start
+         (animation/timing anim-opacity
+                           {:toValue  0
+                            :delay    800
+                            :duration 150
+                            :easing   (.-ease (animation/easing))
+                            :useNativeDriver true}))
         (utils/set-timeout
          #(reset! show-connected? false)
          2000))
     (do (reset! show-connected? true)
-        (animation/start
-         (animation/parallel
-          [(animation/timing anim-opacity
-                             {:toValue 1
-                              :duration 150
-                              :easing (.-ease (animation/easing))})
-           (animation/timing anim-height
-                             {:toValue 35
-                              :duration 150
-                              :easing (.-ease (animation/easing))})])))))
+        #_(animation/start
+         (animation/timing anim-opacity
+                           {:toValue  1
+                            :duration 150
+                            :easing   (.-ease (animation/easing))
+                            :useNativeDriver true})))))
 
 (defn connectivity-status
   [{:keys [connected?]}]
@@ -110,11 +101,11 @@
                   @show-connected?)
           [react/animated-view {:style               (styles/text-wrapper
                                                       (assoc opts
-                                                             :height anim-height
+                                                             :height 35
                                                              :background-color (if connected?
                                                                                  colors/green
                                                                                  colors/gray)
-                                                             :opacity anim-opacity
+                                                             ;;:opacity anim-opacity
                                                              :modal? (= view-id :chat-modal)))
                                 :accessibility-label :connection-status-text}
            (when connecting?
